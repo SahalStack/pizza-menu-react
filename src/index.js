@@ -1,6 +1,5 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-import pizzaImg from "./pizzas/salamino.jpg";
 import "./index.css";
 
 const pizzaData = [
@@ -67,16 +66,36 @@ function Header() {
 }
 
 function Menu() {
+  const pizzaCount = pizzaData.length;
+  // const pizzaCount = [];
   return (
     <div className="menu">
       <h2>our Menu</h2>
-      <Pizza />
-      <Pizza />
-      <Pizza />
-      <Pizza />
-      <Pizza />
-      <Pizza />
+
+      {pizzaCount > 0 ? (
+        <ul className="pizzas">
+          {pizzaData.map((pizza) => {
+            return <Pizza pizzaObject={pizza} key={pizza.name} />;
+          })}
+        </ul>
+      ) : (
+        <p>We're still working on our menu. Please come back later.</p>
+      )}
     </div>
+  );
+}
+
+function Pizza(props) {
+  if (props.pizzaObject.soldOut) return null;
+  return (
+    <li className="pizza">
+      <img src={props.pizzaObject.photoName} alt={props.pizzaObject.name} />
+      <div>
+        <h3>{props.pizzaObject.name}</h3>
+        <p>{props.pizzaObject.ingredients}</p>
+        <span>{props.pizzaObject.price + 3}</span>
+      </div>
+    </li>
   );
 }
 
@@ -84,25 +103,27 @@ function Footer() {
   const ourHour = new Date().getHours();
   const openHour = 12;
   const closeHour = 22;
-
-  //  if (ourHour >= openHour && ourHour < closeHour) {
-  //   alert("We are Open now!");
-  // } else {
-  //   alert("We are closed now!");
-  // }
+  const isOpen = ourHour >= openHour && ourHour < closeHour;
   return (
     <div className="footer">
-      <footer>{new Date().toLocaleTimeString()} We are currently open!</footer>
+      {isOpen ? (
+        <Order closeHour={closeHour} />
+      ) : (
+        <p>
+          We're happy to welcome you between {openHour}:00 and {closeHour}:00
+        </p>
+      )}
     </div>
   );
 }
 
-function Pizza() {
+function Order(props) {
   return (
-    <div>
-      <h3>Pizza Salamino</h3>
-      <p>Tomato, mozarella, and pepperoni</p>
-      <img src={pizzaImg} alt="Pizza Salamino" />
+    <div className="order">
+      <p>
+        We are open until {props.closeHour}:00. Come visit us or order online.
+      </p>
+      <button className="btn">Order now</button>
     </div>
   );
 }
